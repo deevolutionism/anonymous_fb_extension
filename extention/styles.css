@@ -1,0 +1,53 @@
+.anon_compose {
+  background-color: black;
+  padding: 10px 10px 10px 10px;
+}
+
+.anon_input[contenteditable=true] {
+  width: 100%;
+  margin: 10px 0px;
+  padding: 25px 0px;
+  border: none;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+  background-color: black;
+  display: inline-block;
+  font-size: 42px;
+  color: white;
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}
+
+.anon_inputbox[contenteditable=true] {
+  padding: 10px 5px;
+    font-size: 42px;
+    background-color: black;
+    border: none;
+    color: white;
+}
+
+
+.anon_input:focus {
+  outline-width: 0;
+}
+
+.anon_submit {
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 2px;
+  padding: 5px 10px;
+  float: right;
+  color: white;
+  font-weight:bold;
+}
+
+.anon_submit:hover {
+  cursor:pointer;
+}
+
+.switch_submit {
+  margin:7px;
+}
