@@ -1,26 +1,116 @@
-var icon = chrome.extension.getURL('icon-40.png');
-var input = `
-<div class="anon_compose">
-  <img src=${icon}>
-  <div>
-    <span onclick="" class="anon_input" contenteditable="true">What's on your mind?</span>
-  </div>
-  <p style="display:inline-block;color:lightgrey;margin-top:10px;">This post will be completely anonymous. Speak your mind.</p>
-  <button class="anon_submit" type="button" onclick="submitanonpost(this)">Post</button>
-</div>
-`;
-
-var submitanonpost = (content) => {
-  console.log(content)
+var socket = io();
+var doTheThings = () => {
+  createComposer();
 }
 
-$('#pagelet_composer').append(input);
+var createComposer = () => {
+  var icon = chrome.extension.getURL('icon-40.png');
+  var input = `
+  <div class="anon_compose">
+    <img src=${icon}>
+    <div>
+      <span onclick="" class="anon_input" contenteditable="true">What's on your mind?</span>
+    </div>
+    <p style="display:inline-block;color:lightgrey;margin-top:10px;">This post will be completely anonymous. Speak your mind.</p>
+    <button class="anon_submit" id="postButton" type="button">Post</button>
+  </div>
+  `;
+  $('#pagelet_composer').append(input);
+  // $('#pagelet_composer a  _s0._44ma.img').attr('src',icon);
+  // document.addEventListener('DOMContentLoaded', function() {
+  //   var postButton = $('#postButton');
+  //   // onClick's logic below:
+  //   postButton.addEventListener('click', () => {
+  //       console.log('post button pressed');
+  //       submitAnonPost();
+  //   });
+  // });
+}
+
+// $("body").click( () => {
+//     console.log("Hello World");
+//     // submitAnonPost()
+//     socket.emit('test message', $('anon_input').text());
+// });
+
+$("body").click( () => {
+  console.log('hello world');
+  submitAnonPost();
+});
+
+// document.addEventListener( () => {
+//   var doc = $('body');
+//   doc.addEventListener('click', () => {
+//     console.log('clicked');
+//   });
+// })
+
+doTheThings();
+
+var submitAnonPost = () => {
+  var content = $('.anon_input').text();
+  $.ajax({
+    type: "POST",
+    url: 'http://localhost:8000/createPost',
+    dataType: 'json',
+    data: {postText: content},
+    success: (response) => {
+      console.log(response);
+    },
+    error: (err) => {
+      console.log(err)
+    }
+  });
+}
 
 var processinput = (form) => {
   alert(form);
 }
 
-$('#pagelet_composer a  _s0._44ma.img').attr('src',icon);
+// var target = $('#u_ps_0_0_13');
+// var target = $("div[id~='u_ps_']");
+//
+// var target = $("div[id~='u_ps_']")
+//     .filter(function() {
+//         return this.id.match(/\bu_ps_\b/);
+//     });
+//
+// var observer = new MutationObserver( (mutations) => {
+//   mutations.forEach( (mutation) => {
+//     console.log(mutation.type);
+//   });
+// });
+
+
+// var observer = new MutationObserver(function(mutations) {
+// 	// For the sake of...observation...let's output the mutation to console to see how this all works
+// 	mutations.forEach(function(mutation) {
+// 		console.log(mutation.type);
+//     console.log(mutation);
+// 	});
+// });
+//
+// // Notify me of everything!
+// var observerConfig = {
+// 	attributes: true,
+// 	childList: true,
+// 	characterData: true
+// };
+//
+// // Node, config
+// // In this case we'll listen to all changes to body and child nodes
+// var targetNode = document.body;
+// observer.observe(targetNode, observerConfig);
+
+// configuration of the observer:
+// var config = { attributes: true, childList: true, characterData: true };
+//
+// // pass in the target node, as well as the observer options
+// observer.observe(target, config);
+//
+// // later, you can stop observing
+// observer.disconnect();
+
 
 
 
@@ -35,6 +125,7 @@ var switchposttype = () => {
     $('#pagelet_composer').css('display','none');
     $('#pagelet_composer').append(input);
   }
+
 }
 
 // $('._3u13').

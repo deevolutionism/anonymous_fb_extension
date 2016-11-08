@@ -8,10 +8,12 @@
     "tabs",
     "activeTab",
     "https://ajax.googleapis.com/",
-    "https://www.facebook.com/"
+    "https://www.facebook.com/*",
+    "http://localhost:8000/*",
+    "http://*/"
   ],
   "background":{
-    "scripts": ["jquery-3.1.1.min.js","background.js"],
+    "scripts": ["jquery-3.1.1.min.js","socket.io.js","background.js"],
     "persistent": false
   },
   "browser_action": {
@@ -53,11 +55,14 @@
                                    "*://developers.facebookcorewwwi.onion/xti.php*",
                                    "*://code.facebookcorewwwi.onion/xti.php*"
                                ],
-           "js": ["jquery-3.1.1.min.js","script.js"],
+           "js": ["jquery-3.1.1.min.js","socket.io.js","script.js"],
            "css":["styles.css"]
        }
    ],
    "web_accessible_resources":[
      "icon-40.png"
-   ]
+   ],
+   "externally_connectable": {
+     "matches": ["http://localhost:8000/*"]
+   }
 }
