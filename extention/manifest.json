@@ -10,7 +10,8 @@
     "https://ajax.googleapis.com/",
     "https://www.facebook.com/*",
     "http://localhost:8000/*",
-    "http://*/"
+    "https://gentrydemchak.com/portfolio",
+    "https://*/"
   ],
   "background":{
     "scripts": ["jquery-3.1.1.min.js","socket.io.js","background.js"],
@@ -59,8 +60,11 @@
            "css":["styles.css"]
        }
    ],
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
    "web_accessible_resources":[
-     "icon-40.png"
+     "icon-40.png",
+     "http://localhost:8000/*",
+     "https://gentrydemchak.com/portfolio"
    ],
    "externally_connectable": {
      "matches": ["http://localhost:8000/*"]

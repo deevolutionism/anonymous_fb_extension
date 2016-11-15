@@ -1,6 +1,29 @@
 var socket = io();
 var doTheThings = () => {
   createComposer();
+  loadposts();
+  $(".anon_submit").click( () => {
+  var posttext = $('.anon_input').text();
+  console.log('sent');
+  var xhr= new XMLHttpRequest();   // new HttpRequest instance
+  xhr.open("PUT", "https://gentrydemchak.com/createPost");
+  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  xhr.send({ text: posttext });
+  xhr.onreadystatechange = () => {
+    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+              console.log(xhr.responseText);
+    }
+  }; // Implemented elsewhere.
+  $.ajax({
+  method: "PUT",
+  url: "https://gentrydemchak.com/createPost",
+  dataType: 'JSON',
+  data: { text:posttext }
+  })
+  .done( ( msg ) => {
+    console.log( "Data Saved: " + JSON.stringify(msg) );
+  });
+  });
 }
 
 var createComposer = () => {
@@ -33,10 +56,45 @@ var createComposer = () => {
 //     socket.emit('test message', $('anon_input').text());
 // });
 
-$("body").click( () => {
-  console.log('hello world');
-  submitAnonPost();
-});
+
+
+
+var loadposts = () => {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = () => {
+    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+              console.log(xhr.responseText);
+    }
+  }; // Implemented elsewhere.
+  xhr.open("GET",'https://gentrydemchak.com/posts', true);
+  xhr.send();
+}
+
+
+// function callOtherDomain() {
+//   if(invocation) {
+//     invocation.open('GET', url, true);
+//     invocation.onreadystatechange = handler;
+//     invocation.send();
+//   }
+// }
+
+
+//test ajax request to server for posting new comment.
+// function ajax(url, callback, data, x) {
+// 	try {
+// 		x = new(this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
+// 		x.open(data ? 'POST' : 'GET', url, 1);
+// 		x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+// 		x.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+// 		x.onreadystatechange =  () => {
+// 			x.readyState > 3 && callback && callback(x.responseText, x);
+// 		};
+// 		x.send(data)
+// 	} catch (e) {
+// 		window.console && console.log(e);
+// 	}
+// };
 
 // document.addEventListener( () => {
 //   var doc = $('body');
@@ -47,21 +105,21 @@ $("body").click( () => {
 
 doTheThings();
 
-var submitAnonPost = () => {
-  var content = $('.anon_input').text();
-  $.ajax({
-    type: "POST",
-    url: 'http://localhost:8000/createPost',
-    dataType: 'json',
-    data: {postText: content},
-    success: (response) => {
-      console.log(response);
-    },
-    error: (err) => {
-      console.log(err)
-    }
-  });
-}
+// var submitAnonPost = () => {
+//   var content = $('.anon_input').text();
+//   $.ajax({
+//     type: "POST",
+//     url: 'https://gentrydemchak.com/portfolio',
+//     dataType: 'json',
+//     data: {postText: content},
+//     success: (response) => {
+//       console.log(response);
+//     },
+//     error: (err) => {
+//       console.log(err)
+//     }
+//   });
+// }
 
 var processinput = (form) => {
   alert(form);
