@@ -1,29 +1,13 @@
-var socket = io();
+var posts = [];
+var nextStream = 0;
+var nextPost = 1;
+
 var doTheThings = () => {
   createComposer();
   loadposts();
-  $(".anon_submit").click( () => {
-  var posttext = $('.anon_input').text();
-  console.log('sent');
-  var xhr= new XMLHttpRequest();   // new HttpRequest instance
-  xhr.open("PUT", "https://gentrydemchak.com/createPost");
-  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  xhr.send({ text: posttext });
-  xhr.onreadystatechange = () => {
-    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-              console.log(xhr.responseText);
-    }
-  }; // Implemented elsewhere.
-  $.ajax({
-  method: "PUT",
-  url: "https://gentrydemchak.com/createPost",
-  dataType: 'JSON',
-  data: { text:posttext }
-  })
-  .done( ( msg ) => {
-    console.log( "Data Saved: " + JSON.stringify(msg) );
-  });
-  });
+  posteventlistener();
+  composeEditListener();
+  reload();
 }
 
 var createComposer = () => {
@@ -32,13 +16,14 @@ var createComposer = () => {
   <div class="anon_compose">
     <img src=${icon}>
     <div>
-      <span onclick="" class="anon_input" contenteditable="true">What's on your mind?</span>
+      <span class="anon_input" contenteditable="true">What's on your mind?</span>
     </div>
     <p style="display:inline-block;color:lightgrey;margin-top:10px;">This post will be completely anonymous. Speak your mind.</p>
     <button class="anon_submit" id="postButton" type="button">Post</button>
   </div>
   `;
   $('#pagelet_composer').append(input);
+
   // $('#pagelet_composer a  _s0._44ma.img').attr('src',icon);
   // document.addEventListener('DOMContentLoaded', function() {
   //   var postButton = $('#postButton');
@@ -50,76 +35,87 @@ var createComposer = () => {
   // });
 }
 
-// $("body").click( () => {
-//     console.log("Hello World");
-//     // submitAnonPost()
-//     socket.emit('test message', $('anon_input').text());
-// });
-
-
-
-
 var loadposts = () => {
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = () => {
     if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-              console.log(xhr.responseText);
+      // console.log(JSON.parse(xhr.responseText));
+      posts = JSON.parse(xhr.responseText);
+      // console.log(posts.posts[0]);
+      console.log(posts);
+      for(let i = 0; i<posts.posts.length; i++){
+        populate(posts.posts[i],'#substream_0');
+      }
     }
   }; // Implemented elsewhere.
   xhr.open("GET",'https://gentrydemchak.com/posts', true);
   xhr.send();
 }
 
+var populate = (post,targetid) => {
+  // console.log(post);
+  var icon = chrome.extension.getURL('icon-40.png');
+  let text = post.text;
+  let time = post.time;
+  console.log('appending post');
+  $(targetid).append(
+    `
+    <div class="anon_compose anon_container">
+      <img src=${icon}>
+      <div>
+        <span class="anon_text">${text}</span>
+      </div>
+      <p style="display:inline-block;color:lightgrey;margin-top:10px;">${time}</p>
+    </div>
+    `
+  )
+}
 
-// function callOtherDomain() {
-//   if(invocation) {
-//     invocation.open('GET', url, true);
-//     invocation.onreadystatechange = handler;
-//     invocation.send();
-//   }
-// }
+var posteventlistener = () => {
+  $(".anon_submit").click( () => {
+    var posttext = $('.anon_input').text();
+    console.log('sent');
+    $.ajax({
+      method: "PUT",
+      url: "https://gentrydemchak.com/createPost",
+      dataType: 'JSON',
+      data: { text:posttext }
+    })
+    .done( ( msg ) => {
+        console.log(msg);
+        populate(msg,'#substream_0');
+        $('.anon_input').text('What\'s on your mind?');
+    });
+  });
+}
+
+var composeEditListener = () => {
+  var composing = false;
+  $('.anon_input').click( () => {
+    var t = $('.anon_input').text();
+    if(t == 'What\'s on your mind?'){
+      composing = true;
+    }
+    if(composing){
+      $('.anon_input').text('');
+    } else {
+      $('.anon_input').text('What\'s on your mind?');
+    }
+  });
+
+}
+
+var reload = () => {
+  $('#u_0_3').click( () => {
+    window.setTimeout(doTheThings,3000);
+  });
+}
+
+window.onload = () => {
+  doTheThings();
+};
 
 
-//test ajax request to server for posting new comment.
-// function ajax(url, callback, data, x) {
-// 	try {
-// 		x = new(this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
-// 		x.open(data ? 'POST' : 'GET', url, 1);
-// 		x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-// 		x.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-// 		x.onreadystatechange =  () => {
-// 			x.readyState > 3 && callback && callback(x.responseText, x);
-// 		};
-// 		x.send(data)
-// 	} catch (e) {
-// 		window.console && console.log(e);
-// 	}
-// };
-
-// document.addEventListener( () => {
-//   var doc = $('body');
-//   doc.addEventListener('click', () => {
-//     console.log('clicked');
-//   });
-// })
-
-doTheThings();
-
-// var submitAnonPost = () => {
-//   var content = $('.anon_input').text();
-//   $.ajax({
-//     type: "POST",
-//     url: 'https://gentrydemchak.com/portfolio',
-//     dataType: 'json',
-//     data: {postText: content},
-//     success: (response) => {
-//       console.log(response);
-//     },
-//     error: (err) => {
-//       console.log(err)
-//     }
-//   });
-// }
 
 var processinput = (form) => {
   alert(form);
@@ -140,20 +136,78 @@ var processinput = (form) => {
 // });
 
 
-// var observer = new MutationObserver(function(mutations) {
-// 	// For the sake of...observation...let's output the mutation to console to see how this all works
-// 	mutations.forEach(function(mutation) {
-// 		console.log(mutation.type);
-//     console.log(mutation);
-// 	});
-// });
-//
-// // Notify me of everything!
-// var observerConfig = {
-// 	attributes: true,
-// 	childList: true,
-// 	characterData: true
-// };
+var observer = new MutationObserver(function(mutations) {
+	//collect each new post that the feed loads
+	mutations.forEach(function(mutation) {
+    var substreams = [];
+		var numposts = mutation
+      .target
+      .childNodes[0]
+      .childNodes[1]
+      .childNodes[0]
+      .childNodes[0]
+      .childNodes[1]
+      .childNodes[1]
+      .childNodes[1]
+      .childNodes[0]
+      .childNodes[3]
+      .childNodes[0]
+      .childNodes[3]
+      .childNodes[0]
+      .childNodes.length
+
+    //log the html of each new post
+    for(var i = 0; i<numposts;i++){
+      substreams.push(
+        mutation
+        .target
+        .childNodes[0]
+        .childNodes[1]
+        .childNodes[0]
+        .childNodes[0]
+        .childNodes[1]
+        .childNodes[1]
+        .childNodes[1]
+        .childNodes[0]
+        .childNodes[3]
+        .childNodes[0]
+        .childNodes[3]
+        .childNodes[0]
+        .childNodes[i]
+      );
+    }
+
+    // for(var j = 0; j<substreams.length;j++){
+    //   if(j < posts.length){
+    //     console.log(substreams[j])
+    //     populate(posts[j],substreams[j]);
+    //   }
+    // }
+    // console.log(posts);
+    console.log(`next post:${nextPost} and post length:${posts.posts.length}`);
+    if(nextPost < posts.posts.length){
+      var el = substreams[nextStream];
+      var id = $(el).attr('id');
+      populate(posts.posts[nextPost],`#${id}`);
+      nextPost++
+      nextStream++
+    }
+
+	});
+});
+
+// Notify me of everything!
+var observerConfig = {
+	attributes: true,
+	childList: true,
+	characterData: true
+};
+
+// Node, config
+// In this case we'll listen to all changes to body and child nodes
+var targetNode = document.body;
+observer.observe(targetNode, observerConfig);
+
 //
 // // Node, config
 // // In this case we'll listen to all changes to body and child nodes
@@ -185,5 +239,3 @@ var switchposttype = () => {
   }
 
 }
-
-// $('._3u13').
