@@ -1,10 +1,23 @@
 .anon_compose {
   background-color: black;
   padding: 10px 10px 10px 10px;
+  margin-bottom: 10px;
 }
 
 .anon_text {
   color: white;
+}
+
+.icon {
+  vertical-align: top;
+}
+
+.name {
+  color: white;
+}
+
+.anon_text_container {
+  margin: 10px 0 10px 0;
 }
 
 .anon_container {
@@ -52,8 +65,55 @@
   font-weight:bold;
 }
 
+.anon_comment_button {
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 2px;
+  padding: 5px 10px;
+  color: white;
+  font-weight:bold;
+}
+
+.anon_comment_button:hover {
+  cursor: not-allowed;
+}
+
 .anon_submit:hover {
   cursor:pointer;
+}
+
+.like {
+  display: inline-block;
+  padding: 5px;
+  color: white;
+}
+
+.dislike {
+  display: inline-block;
+  padding: 5px;
+  color: white;
+}
+
+.dislike_button {
+  margin-right: 5px;
+  color: white;
+  background: black;
+  border: 1px solid white;
+}
+
+.like_button {
+  margin-right: 5px;
+  color: white;
+  background: black;
+  border: 1px solid white;
+}
+
+.like_button:hover {
+  cursor: not-allowed;
+}
+
+.dislike_button:hover {
+  cursor: not-allowed;
 }
 
 .switch_submit {

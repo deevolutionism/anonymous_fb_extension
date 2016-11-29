@@ -23,16 +23,6 @@ var createComposer = () => {
   </div>
   `;
   $('#pagelet_composer').append(input);
-
-  // $('#pagelet_composer a  _s0._44ma.img').attr('src',icon);
-  // document.addEventListener('DOMContentLoaded', function() {
-  //   var postButton = $('#postButton');
-  //   // onClick's logic below:
-  //   postButton.addEventListener('click', () => {
-  //       console.log('post button pressed');
-  //       submitAnonPost();
-  //   });
-  // });
 }
 
 var loadposts = () => {
@@ -57,15 +47,28 @@ var populate = (post,targetid) => {
   var icon = chrome.extension.getURL('icon-40.png');
   let text = post.text;
   let time = post.time;
+  let id = post._id;
   console.log('appending post');
-  $(targetid).append(
+  $(targetid).prepend(
     `
-    <div class="anon_compose anon_container">
-      <img src=${icon}>
-      <div>
+    <div class="anon_compose anon_container" id="${id}">
+      <div style="display:flex">
+        <img class="icon" src=${icon}>
+        <div style="display:inline-block; margin-left:10px;">
+          <p class = "name" style="margin:0;"> Racoon</p>
+          <p class = "time" style="margin:0;display:inline-block;color:lightgrey;margin-top:10px;">${time}</p>
+        </div>
+      </div>
+      <div class="anon_text_container">
         <span class="anon_text">${text}</span>
       </div>
-      <p style="display:inline-block;color:lightgrey;margin-top:10px;">${time}</p>
+      <div style="border-top:1px solid white; padding-top:10px">
+        <button class="anon_comment_button" onclick="submitComment()">Comment</button>
+        <div class = "voting_container">
+          <p class="like"><button class="like_button" id="${id}">like</button>0</p>
+          <p class="dislike"><button class="dislike_button" id="${id}">dislike</button>0</p>
+        </div>
+      </div>
     </div>
     `
   )
@@ -102,12 +105,17 @@ var composeEditListener = () => {
       $('.anon_input').text('What\'s on your mind?');
     }
   });
+}
+
+var submitComment = () => {
 
 }
 
 var reload = () => {
   $('#u_0_3').click( () => {
-    window.setTimeout(doTheThings,3000);
+    //wait until fb loads all of its content
+    //so it doesn't overwrite all the posts.
+    window.setTimeout(doTheThings, 3000);
   });
 }
 
@@ -120,21 +128,6 @@ window.onload = () => {
 var processinput = (form) => {
   alert(form);
 }
-
-// var target = $('#u_ps_0_0_13');
-// var target = $("div[id~='u_ps_']");
-//
-// var target = $("div[id~='u_ps_']")
-//     .filter(function() {
-//         return this.id.match(/\bu_ps_\b/);
-//     });
-//
-// var observer = new MutationObserver( (mutations) => {
-//   mutations.forEach( (mutation) => {
-//     console.log(mutation.type);
-//   });
-// });
-
 
 var observer = new MutationObserver(function(mutations) {
 	//collect each new post that the feed loads
@@ -177,17 +170,12 @@ var observer = new MutationObserver(function(mutations) {
       );
     }
 
-    // for(var j = 0; j<substreams.length;j++){
-    //   if(j < posts.length){
-    //     console.log(substreams[j])
-    //     populate(posts[j],substreams[j]);
-    //   }
-    // }
-    // console.log(posts);
-    console.log(`next post:${nextPost} and post length:${posts.posts.length}`);
-    if(nextPost < posts.posts.length){
+    console.log(`substreams:${substreams.length}`);
+    console.log(`${nextPost} / ${posts.posts.length} posts`);
+    if(nextPost < posts.posts.length && nextStream < substreams.length){
       var el = substreams[nextStream];
       var id = $(el).attr('id');
+      console.log(`appending post to ${id}`)
       populate(posts.posts[nextPost],`#${id}`);
       nextPost++
       nextStream++
@@ -208,26 +196,8 @@ var observerConfig = {
 var targetNode = document.body;
 observer.observe(targetNode, observerConfig);
 
-//
-// // Node, config
-// // In this case we'll listen to all changes to body and child nodes
-// var targetNode = document.body;
-// observer.observe(targetNode, observerConfig);
-
-// configuration of the observer:
-// var config = { attributes: true, childList: true, characterData: true };
-//
-// // pass in the target node, as well as the observer options
-// observer.observe(target, config);
-//
-// // later, you can stop observing
-// observer.disconnect();
-
-
-
-
-var switchbutton = `<button class="switch_submit anon_submit" onclick="switchopsttype()">Anon</button>`
-$('#pagelet_composer ._ei_ > div.clearfix').append(switchbutton);
+var switchbutton = `<button class="switch_submit anon_submit" onclick="switchposttype()">Anon</button>`
+$('#pagelet_composer ._ei_ > div.clearfix').prepend(switchbutton);
 
 var switched = false;
 var switchposttype = () => {
@@ -237,5 +207,4 @@ var switchposttype = () => {
     $('#pagelet_composer').css('display','none');
     $('#pagelet_composer').append(input);
   }
-
 }
